@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAN Card Fraud Detection System</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  :root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --light-color: #ecf0f1;
+    --dark-color: #2c3e50;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: var(--dark-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    height: 60px;
+    margin-bottom: 15px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.main-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+/* Rest of the CSS remains the same as in the previous example */
+/* ... [Include all the CSS from the previous implementation] ... */
+</head>
+<body>
+    <header>
+        <div class="container">
+            <img src="assets/logo.png" alt="Logo" class="logo">
+            <h1>PAN Card Fraud Detection</h1>
+            <p>Advanced AI-powered system to detect fake PAN cards with high accuracy</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="main-content">
+            <div class="upload-section">
+                <h2>Upload PAN Card</h2>
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & Drop PAN Card Image Here</p>
+                    <p>or</p>
+                    <button class="btn" id="browseBtn">Browse Files</button>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                </div>
+                <button class="btn btn-block" id="analyzeBtn" disabled>Analyze PAN Card</button>
+                <button class="btn btn-danger btn-block" id="resetBtn" disabled>Reset</button>
+                
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p>Analyzing PAN Card. Please wait...</p>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h2>Analysis Results</h2>
+                <div class="result-container" id="resultContainer">
+                    <p>Upload a PAN card image to begin analysis</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2023 PAN Card Fraud Detection System. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const browseBtn = document.getElementById('browseBtn');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const resultContainer = document.getElementById('resultContainer');
+    
+    let uploadedFile = null;
+    
+    // Handle drag and drop events
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.backgroundColor = '';
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.backgroundColor = '';
+        
+        if (e.dataTransfer.files.length) {
+            handleFileUpload(e.dataTransfer.files[0]);
+        }
+    });
+    
+    // Handle file input
+    browseBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) handleFileUpload(fileInput.files[0]);
+    });
+    
+    // Handle analyze button
+    analyzeBtn.addEventListener('click', analyzePANCard);
+    resetBtn.addEventListener('click', resetForm);
+    
+    async function handleFileUpload(file) {
+        if (!file.type.match('image.*')) {
+            alert('Please upload an image file');
+            return;
+        }
+        
+        uploadedFile = file;
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            resultContainer.innerHTML = `
+                <img src="${e.target.result}" class="preview-image" alt="PAN Card Preview">
+                <p>Ready to analyze</p>
+            `;
+            analyzeBtn.disabled = false;
+            resetBtn.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    async function analyzePANCard() {
+        if (!uploadedFile) return;
+        
+        loadingIndicator.style.display = 'block';
+        analyzeBtn.disabled = true;
+        
+        const formData = new FormData();
+        formData.append('file', uploadedFile);
+        
+        try {
+            const response = await fetch('http://localhost:5000/api/verify_pan', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) throw new Error('Server error');
+            
+            const data = await response.json();
+            if (data.status !== 'success') throw new Error(data.error || 'Analysis failed');
+            
+            displayResults(data.data);
+        } catch (error) {
+            console.error('Error:', error);
+            resultContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>${error.message || 'Error analyzing PAN card'}</p>
+                </div>
+            `;
+        } finally {
+            loadingIndicator.style.display = 'none';
+        }
+    }
+    
+    function displayResults(data) {
+        const detailsHTML = Object.entries(data.details).map(([key, value]) => `
+            <div class="result-item">
+                <span class="result-label">${key}:</span>
+                <span class="result-value">${value}</span>
+            </div>
+        `).join('');
+        
+        const extractedHTML = Object.entries(data.extracted_data).map(([key, value]) => `
+            <div class="result-item">
+                <span class="result-label">${key}:</span>
+                <span class="result-value">${value || 'Not detected'}</span>
+            </div>
+        `).join('');
+        
+        const authenticityClass = data.authenticity === "Authentic" ? "authentic" : "fake";
+        
+        resultContainer.innerHTML = `
+            <img src="${URL.createObjectURL(uploadedFile)}" class="preview-image" alt="PAN Card Preview">
+            
+            <div class="result-details">
+                <div class="result-item">
+                    <span class="result-label">Authenticity:</span>
+                    <span class="result-value ${authenticityClass}">${data.authenticity}</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Confidence Level:</span>
+                    <span class="result-value">${data.confidence}%</span>
+                </div>
+                
+                <h3>Validation Details</h3>
+                ${detailsHTML}
+                
+                <h3>Extracted Data</h3>
+                ${extractedHTML}
+            </div>
+        `;
+    }
+    
+    function resetForm() {
+        uploadedFile = null;
+        fileInput.value = '';
+        analyzeBtn.disabled = true;
+        resetBtn.disabled = true;
+        loadingIndicator.style.display = 'none';
+        resultContainer.innerHTML = '<p>Upload a PAN card image to begin analysis</p>';
+    }
+});
+</body>
+</html>
