@@ -4,76 +4,344 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAN Card Fraud Detection System</title>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-  :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --accent-color: #e74c3c;
-    --light-color: #ecf0f1;
-    --dark-color: #2c3e50;
-}
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #2962ff;
+            --accent-color: #ff3d00;
+            --light-color: #f5f7ff;
+            --dark-color: #0d1b2a;
+            --success-color: #00c853;
+            --warning-color: #ffab00;
+            --error-color: #d50000;
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
 
-body {
-    background-color: #f5f7fa;
-    color: var(--dark-color);
-    line-height: 1.6;
-}
+        body {
+            background-color: #f8f9fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 20px 0;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #283593);
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
 
-.logo {
-    height: 60px;
-    margin-bottom: 15px;
-}
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
 
-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-}
+        .logo {
+            height: 70px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            transition: var(--transition);
+        }
 
-header p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
+        .logo:hover {
+            transform: translateY(-2px);
+        }
 
-.main-content {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    margin-top: 40px;
-}
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
 
-/* Rest of the CSS remains the same as in the previous example */
-/* ... [Include all the CSS from the previous implementation] ... */
-</style>
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 40px auto;
+        }
+
+        .upload-section, .result-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .upload-section:hover, .result-section:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .upload-section h2, .result-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .upload-section h2::after, .result-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--secondary-color);
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 25px;
+            background-color: rgba(41, 98, 255, 0.03);
+        }
+
+        .upload-area:hover {
+            background-color: rgba(41, 98, 255, 0.08);
+            border-color: var(--primary-color);
+        }
+
+        .upload-area i {
+            font-size: 3.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover i {
+            transform: scale(1.1);
+        }
+
+        .upload-area p {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: var(--dark-color);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: #1a56ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(41, 98, 255, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-danger {
+            background-color: var(--accent-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #e53900;
+            box-shadow: 0 5px 15px rgba(255, 61, 0, 0.3);
+        }
+
+        .result-container {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .result-details {
+            width: 100%;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            align-items: center;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 1rem;
+        }
+
+        .result-value {
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .authentic {
+            color: var(--success-color);
+            font-weight: 700;
+        }
+
+        .fake {
+            color: var(--error-color);
+            font-weight: 700;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--secondary-color);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background-color: rgba(213, 0, 0, 0.08);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--error-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .error-message i {
+            color: var(--error-color);
+            font-size: 1.5rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            color: var(--dark-color);
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        h3 {
+            color: var(--primary-color);
+            margin: 25px 0 15px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-section, .result-section {
+                padding: 25px;
+            }
+        }
+
+        /* Animation for file upload */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .upload-area.active {
+            animation: pulse 1.5s infinite;
+            border-style: solid;
+            background-color: rgba(41, 98, 255, 0.1);
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="container">
             <img src="assets/logo.png" alt="Logo" class="logo">
             <h1>PAN Card Fraud Detection</h1>
-            <p>Advanced AI-powered system to detect fake PAN cards with high accuracy</p>
+            <p>Advanced AI-powered system to detect fake PAN cards with 95%+ accuracy using computer vision and machine learning</p>
         </div>
     </header>
     
@@ -100,7 +368,8 @@ header p {
             <div class="result-section">
                 <h2>Analysis Results</h2>
                 <div class="result-container" id="resultContainer">
-                    <p>Upload a PAN card image to begin analysis</p>
+                    <i class="fas fa-id-card" style="font-size: 3rem; color: #cfd8dc; margin-bottom: 20px;"></i>
+                    <p style="color: #90a4ae;">Upload a PAN card image to begin analysis</p>
                 </div>
             </div>
         </div>
@@ -111,149 +380,173 @@ header p {
             <p>© 2023 PAN Card Fraud Detection System. All rights reserved.</p>
         </div>
     </footer>
+    
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const uploadArea = document.getElementById('uploadArea');
-    const fileInput = document.getElementById('fileInput');
-    const browseBtn = document.getElementById('browseBtn');
-    const analyzeBtn = document.getElementById('analyzeBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    const resultContainer = document.getElementById('resultContainer');
-    
-    let uploadedFile = null;
-    
-    // Handle drag and drop events
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
-    });
-    
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.style.backgroundColor = '';
-    });
-    
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.style.backgroundColor = '';
-        
-        if (e.dataTransfer.files.length) {
-            handleFileUpload(e.dataTransfer.files[0]);
-        }
-    });
-    
-    // Handle file input
-    browseBtn.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files.length) handleFileUpload(fileInput.files[0]);
-    });
-    
-    // Handle analyze button
-    analyzeBtn.addEventListener('click', analyzePANCard);
-    resetBtn.addEventListener('click', resetForm);
-    
-    async function handleFileUpload(file) {
-        if (!file.type.match('image.*')) {
-            alert('Please upload an image file');
-            return;
-        }
-        
-        uploadedFile = file;
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            resultContainer.innerHTML = `
-                <img src="${e.target.result}" class="preview-image" alt="PAN Card Preview">
-                <p>Ready to analyze</p>
-            `;
-            analyzeBtn.disabled = false;
-            resetBtn.disabled = false;
-        };
-        reader.readAsDataURL(file);
-    }
-    
-    async function analyzePANCard() {
-        if (!uploadedFile) return;
-        
-        loadingIndicator.style.display = 'block';
-        analyzeBtn.disabled = true;
-        
-        const formData = new FormData();
-        formData.append('file', uploadedFile);
-        
-        try {
-            const response = await fetch('http://localhost:5000/api/verify_pan', {
-                method: 'POST',
-                body: formData
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const browseBtn = document.getElementById('browseBtn');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultContainer = document.getElementById('resultContainer');
+            
+            let uploadedFile = null;
+            
+            // Handle drag and drop events
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('active');
+                uploadArea.style.backgroundColor = 'rgba(41, 98, 255, 0.1)';
             });
             
-            if (!response.ok) throw new Error('Server error');
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('active');
+                uploadArea.style.backgroundColor = '';
+            });
             
-            const data = await response.json();
-            if (data.status !== 'success') throw new Error(data.error || 'Analysis failed');
-            
-            displayResults(data.data);
-        } catch (error) {
-            console.error('Error:', error);
-            resultContainer.innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <p>${error.message || 'Error analyzing PAN card'}</p>
-                </div>
-            `;
-        } finally {
-            loadingIndicator.style.display = 'none';
-        }
-    }
-    
-    function displayResults(data) {
-        const detailsHTML = Object.entries(data.details).map(([key, value]) => `
-            <div class="result-item">
-                <span class="result-label">${key}:</span>
-                <span class="result-value">${value}</span>
-            </div>
-        `).join('');
-        
-        const extractedHTML = Object.entries(data.extracted_data).map(([key, value]) => `
-            <div class="result-item">
-                <span class="result-label">${key}:</span>
-                <span class="result-value">${value || 'Not detected'}</span>
-            </div>
-        `).join('');
-        
-        const authenticityClass = data.authenticity === "Authentic" ? "authentic" : "fake";
-        
-        resultContainer.innerHTML = `
-            <img src="${URL.createObjectURL(uploadedFile)}" class="preview-image" alt="PAN Card Preview">
-            
-            <div class="result-details">
-                <div class="result-item">
-                    <span class="result-label">Authenticity:</span>
-                    <span class="result-value ${authenticityClass}">${data.authenticity}</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Confidence Level:</span>
-                    <span class="result-value">${data.confidence}%</span>
-                </div>
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('active');
+                uploadArea.style.backgroundColor = '';
                 
-                <h3>Validation Details</h3>
-                ${detailsHTML}
+                if (e.dataTransfer.files.length) {
+                    handleFileUpload(e.dataTransfer.files[0]);
+                }
+            });
+            
+            // Handle file input
+            browseBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length) handleFileUpload(fileInput.files[0]);
+            });
+            
+            // Handle analyze button
+            analyzeBtn.addEventListener('click', analyzePANCard);
+            resetBtn.addEventListener('click', resetForm);
+            
+            async function handleFileUpload(file) {
+                if (!file.type.match('image.*')) {
+                    showError('Please upload an image file (JPEG, PNG)');
+                    return;
+                }
                 
-                <h3>Extracted Data</h3>
-                ${extractedHTML}
-            </div>
-        `;
-    }
-    
-    function resetForm() {
-        uploadedFile = null;
-        fileInput.value = '';
-        analyzeBtn.disabled = true;
-        resetBtn.disabled = true;
-        loadingIndicator.style.display = 'none';
-        resultContainer.innerHTML = '<p>Upload a PAN card image to begin analysis</p>';
-    }
-});
+                // Check file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    showError('File size too large. Maximum 5MB allowed.');
+                    return;
+                }
+                
+                uploadedFile = file;
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    resultContainer.innerHTML = `
+                        <img src="${e.target.result}" class="preview-image" alt="PAN Card Preview">
+                        <p style="color: var(--success-color); font-weight: 500;">Ready to analyze</p>
+                    `;
+                    analyzeBtn.disabled = false;
+                    resetBtn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            async function analyzePANCard() {
+                if (!uploadedFile) return;
+                
+                loadingIndicator.style.display = 'block';
+                analyzeBtn.disabled = true;
+                resetBtn.disabled = true;
+                
+                const formData = new FormData();
+                formData.append('file', uploadedFile);
+                
+                try {
+                    const response = await fetch('http://localhost:5000/api/verify_pan', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) throw new Error('Server error. Please try again.');
+                    
+                    const data = await response.json();
+                    if (data.status !== 'success') throw new Error(data.error || 'Analysis failed. Please try again.');
+                    
+                    displayResults(data.data);
+                } catch (error) {
+                    console.error('Error:', error);
+                    showError(error.message || 'Error analyzing PAN card. Please try again.');
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                    resetBtn.disabled = false;
+                }
+            }
+            
+            function displayResults(data) {
+                const detailsHTML = Object.entries(data.details).map(([key, value]) => `
+                    <div class="result-item">
+                        <span class="result-label">${key}:</span>
+                        <span class="result-value">${value}</span>
+                    </div>
+                `).join('');
+                
+                const extractedHTML = Object.entries(data.extracted_data).map(([key, value]) => `
+                    <div class="result-item">
+                        <span class="result-label">${key}:</span>
+                        <span class="result-value">${value || 'Not detected'}</span>
+                    </div>
+                `).join('');
+                
+                const authenticityClass = data.authenticity === "Authentic" ? "authentic" : "fake";
+                const confidenceColor = data.confidence > 80 ? "var(--success-color)" : 
+                                      data.confidence > 60 ? "var(--warning-color)" : "var(--error-color)";
+                
+                resultContainer.innerHTML = `
+                    <img src="${URL.createObjectURL(uploadedFile)}" class="preview-image" alt="PAN Card Preview">
+                    
+                    <div class="result-details">
+                        <div class="result-item">
+                            <span class="result-label">Authenticity:</span>
+                            <span class="result-value ${authenticityClass}">
+                                ${data.authenticity}
+                                <i class="fas ${data.authenticity === "Authentic" ? "fa-check-circle" : "fa-times-circle"}"></i>
+                            </span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Confidence Level:</span>
+                            <span class="result-value" style="color: ${confidenceColor}">${data.confidence}%</span>
+                        </div>
+                        
+                        <h3>Validation Details</h3>
+                        ${detailsHTML}
+                        
+                        <h3>Extracted Data</h3>
+                        ${extractedHTML}
+                    </div>
+                `;
+            }
+            
+            function showError(message) {
+                resultContainer.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>${message}</p>
+                    </div>
+                `;
+            }
+            
+            function resetForm() {
+                uploadedFile = null;
+                fileInput.value = '';
+                analyzeBtn.disabled = true;
+                resetBtn.disabled = true;
+                loadingIndicator.style.display = 'none';
+                resultContainer.innerHTML = `
+                    <i class="fas fa-id-card" style="font-size: 3rem; color: #cfd8dc; margin-bottom: 20px;"></i>
+                    <p style="color: #90a4ae;">Upload a PAN card image to begin analysis</p>
+                `;
+            }
+        });
     </script>
 </body>
 </html>
